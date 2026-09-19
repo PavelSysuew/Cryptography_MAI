@@ -2,7 +2,6 @@
 
 #include <stdexcept>
 #include <string>
-#include <algorithm>
 
 using namespace std;
 
@@ -79,13 +78,9 @@ vector<uint8_t> bitsPermutation(const vector<uint8_t>& input, const vector<size_
 
         size_t source = pBlock[i] - firstElement; 
         bool bit = getBit(input, source, order);
-        setBit(result, i, order, bit);              
+        // результат заполняется в порядке P-блока: pBlock[0] - старший бит result[0]
+        setBit(result, i, bitOrder::leftToRight, bit);
     }
 
-
-    if (order == bitOrder::rightToLeft) {
-        std::reverse(result.begin(), result.end());
-        return result;
-    }
     return result;
 }
