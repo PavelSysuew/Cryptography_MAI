@@ -1,3 +1,6 @@
 build/*
 build/.gitkeep
 CLAUDE.md
+
+# Результаты демо (задание 5)
+demo_output/

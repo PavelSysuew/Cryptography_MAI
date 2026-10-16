@@ -29,7 +29,13 @@ add_executable(lab1
     lab1/src/DesKeyExpansion.cpp
     lab1/src/DesRoundFunction.cpp
     lab1/src/DES.cpp
+    lab1/src/padding.cpp
+    lab1/src/CipherContext.cpp
+    lab1/demo/demo.cpp
 )
+# Демо (задание 5): заголовок demo.h и путь к корню проекта (файлы по умолчанию, папка demo_output)
+target_include_directories(lab1 PRIVATE lab1/demo)
+target_compile_definitions(lab1 PRIVATE PROJECT_ROOT="${CMAKE_SOURCE_DIR}")
 
 
 # ===== Тесты =====
@@ -80,4 +86,37 @@ target_include_directories(test_DES PRIVATE lab1/tests)
 # Тесты 1..13 из test_DES.cpp: имя DES_testN, запуск "test_DES N"
 foreach(n RANGE 1 13)
     add_test(NAME DES_test${n} COMMAND test_DES ${n})
+endforeach()
+
+
+# ===== Тесты задания 2.4, шаг 1: набивки =====
+add_executable(test_padding
+    lab1/tests/task2/test_padding.cpp
+    lab1/src/padding.cpp
+)
+target_include_directories(test_padding PRIVATE lab1/tests)
+
+# Тесты 1..17 из test_padding.cpp: имя padding_testN, запуск "test_padding N"
+foreach(n RANGE 1 17)
+    add_test(NAME padding_test${n} COMMAND test_padding ${n})
+endforeach()
+
+
+# ===== Тесты задания 2.4, шаг 2: контекст и режимы =====
+add_executable(test_CipherContext
+    lab1/tests/task2/test_CipherContext.cpp
+    lab1/src/CipherContext.cpp
+    lab1/src/padding.cpp
+    lab1/src/DES.cpp
+    lab1/src/DesKeyExpansion.cpp
+    lab1/src/DesRoundFunction.cpp
+    lab1/src/FeistelNetwork.cpp
+    lab1/src/bitsPermutation.cpp
+    lab1/src/bytesUtils.cpp
+)
+target_include_directories(test_CipherContext PRIVATE lab1/tests)
+
+# Тесты 1..31 из test_CipherContext.cpp: имя CipherContext_testN, запуск "test_CipherContext N"
+foreach(n RANGE 1 31)
+    add_test(NAME CipherContext_test${n} COMMAND test_CipherContext ${n})
 endforeach()

@@ -1,43 +1,64 @@
-#include <bitset>
-#include <cstddef>
-#include <cstdint>
+/*
+ * Задание 5: демонстрация шифрования и дешифрования алгоритмом DES в разных режимах.
+ *
+ * Запуск:
+ *   ./build/lab1                          - псевдослучайные данные + файлы по умолчанию
+ *   ./build/lab1 song.mp3 video.mp4 ...   - те же демо на своих файлах
+ *
+ * Результаты (зашифрованные и расшифрованные файлы, картинки) - в папке demo_output
+ * в корне проекта. Большие файлы (видео) быстрее шифруются в Release-сборке:
+ *   cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build
+ */
+
+#include <filesystem>
 #include <iostream>
-#include <stdexcept>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include "bitsPermutation.h"
+#include "DES.h"
+#include "demo.h"
+
+#ifndef PROJECT_ROOT
+#define PROJECT_ROOT "."
+#endif
 
 using namespace std;
 
-// Печать массива байтов в двоичном и шестнадцатеричном виде.
-void printBytes(const string& title, const vector<uint8_t>& data) {
-    cout << title;
-    for (uint8_t b : data) {
-        cout << bitset<8>(b) << ' ';
-    }
-    cout << "(";
-    const char* hex = "0123456789ABCDEF";
-    for (uint8_t b : data) {
-        cout << hex[b >> 4] << hex[b & 0x0F];
-    }
-    cout << ")" << endl;
-}
+int main(int argc, char** argv) {
+    const string root = PROJECT_ROOT;
+    const string outputDir = root + "/demo_output";
+    filesystem::create_directories(outputDir);
 
-int main() {
-    vector<uint8_t> b = {0b10110001};
-    vector<size_t> reverse = {1, 2, 3, 1, 2, 3, 0, 7};
+    DemoCipher des{
+        "DES",
+        [] { return make_shared<DES>(); },
+        {0x13, 0x34, 0x57, 0x79, 0x9B, 0xBC, 0xDF, 0xF1},
+    };
+
+    const string imagePath = createDemoImage(outputDir);
+
+    // Файлы: из командной строки или по умолчанию (текст, исходный код, PDF, картинка).
+    vector<string> files;
+    for (int i = 1; i < argc; ++i) {
+        files.push_back(argv[i]);
+    }
+    if (files.empty()) {
+        files = {
+            root + "/docs/lectures/ЛК-3.md",
+            root + "/lab1/tests/task2/test_CipherContext.cpp",
+            root + "/docs/Лабораторная № 1.pdf",
+            imagePath,
+        };
+    }
+
     try {
-        printBytes("reverse:            ", bitsPermutation(b, reverse, bitOrder::rightToLeft, 0));
-    } catch (const invalid_argument& e){
+        demoRandomData(des);
+        demoFiles(des, files, outputDir);
+        demoImageModes(des, imagePath, outputDir);
+    } catch (const exception& e) {
         cout << "Ошибка: " << e.what() << endl;
+        return 1;
     }
-
-    try {
-        printBytes("reverse:            ", bitsPermutation(b, reverse, bitOrder::leftToRight, 0));
-    } catch (const invalid_argument& e){
-        cout << "Ошибка: " << e.what() << endl;
-    }
-
     return 0;
 }
