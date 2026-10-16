@@ -16,7 +16,6 @@ class ISymmetricCipher {
 
         /* Функция шифрования
          * @param block - блок данных для шифрования
-         * @param key - ключ шифрования
          * @return вектор, содержащий зашифрованные данные
          */
         virtual std::vector<uint8_t> encrypt(
@@ -24,7 +23,6 @@ class ISymmetricCipher {
 
         /* Функция дешифрования
          * @param block - блок данных для дешифрования
-         * @param key - ключ дешифрования
          * @return вектор, содержащий дешифрованные данные
          */
         virtual std::vector<uint8_t> decrypt(
