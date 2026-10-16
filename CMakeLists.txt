@@ -25,6 +25,10 @@ add_executable(lab1
     
     lab1/src/bitsPermutation.cpp
     lab1/src/FeistelNetwork.cpp
+    lab1/src/bytesUtils.cpp
+    lab1/src/DesKeyExpansion.cpp
+    lab1/src/DesRoundFunction.cpp
+    lab1/src/DES.cpp
 )
 
 
@@ -44,4 +48,36 @@ enable_testing()
 # Тесты 1..20 из test_bitsPermutation.cpp: имя bitsPermutation_testN, запуск "test_bitsPermutation N"
 foreach(n RANGE 1 20)
     add_test(NAME bitsPermutation_test${n} COMMAND test_bitsPermutation ${n})
+endforeach()
+
+
+# ===== Тесты задания 3: сеть Фейстеля =====
+add_executable(test_FeistelNetwork
+    lab1/tests/task3/test_FeistelNetwork.cpp
+    lab1/src/FeistelNetwork.cpp
+    lab1/src/bytesUtils.cpp
+)
+target_include_directories(test_FeistelNetwork PRIVATE lab1/tests)
+
+# Тесты 1..10 из test_FeistelNetwork.cpp: имя FeistelNetwork_testN, запуск "test_FeistelNetwork N"
+foreach(n RANGE 1 10)
+    add_test(NAME FeistelNetwork_test${n} COMMAND test_FeistelNetwork ${n})
+endforeach()
+
+
+# ===== Тесты задания 4: DES =====
+add_executable(test_DES
+    lab1/tests/task4/test_DES.cpp
+    lab1/src/DES.cpp
+    lab1/src/DesKeyExpansion.cpp
+    lab1/src/DesRoundFunction.cpp
+    lab1/src/FeistelNetwork.cpp
+    lab1/src/bitsPermutation.cpp
+    lab1/src/bytesUtils.cpp
+)
+target_include_directories(test_DES PRIVATE lab1/tests)
+
+# Тесты 1..13 из test_DES.cpp: имя DES_testN, запуск "test_DES N"
+foreach(n RANGE 1 13)
+    add_test(NAME DES_test${n} COMMAND test_DES ${n})
 endforeach()
